@@ -25,7 +25,7 @@ gdf['shape_id'] = range(len(gdf)) # need a unique identifier for each shape
 gdf['Year'] = gdf['Year'].astype(int)
 gdf = gdf.sort_values(by='Year')
 gdf = duplicate_rows(gdf)
-geojson = json.loads(gdf.to_crs(ll_crs).to_json())
+geojson = json.loads(gdf.to_json())
 #####
 # almost definitely will have problems with trying a discrete
 # scale if Year_old is numeric, but changing to a string
