@@ -26,6 +26,13 @@ gdf['Year'] = gdf['Year'].astype(int)
 gdf = gdf.sort_values(by='Year')
 gdf = duplicate_rows(gdf)
 geojson = json.loads(gdf.to_crs(ll_crs).to_json())
+#####
+# almost definitely will have problems with trying a discrete
+# scale if Year_old is numeric, but changing to a string
+# destroys the whole thing, so have to figure that out
+# gdf['Year_old'] = gdf['Year_old'].astype(str)
+gdf = gdf.reset_index(drop=True)
+
 
 # might have to manually build the frames individually?
 # https://community.plotly.com/t/cumulative-lines-animation-in-python/25707
@@ -35,11 +42,13 @@ geojson = json.loads(gdf.to_crs(ll_crs).to_json())
 # when change color to `shape_id` column this last issue is sorted
 # just need to write something to duplicate all that information
 
-
-fig = px.choropleth_mapbox(gdf, geojson=geojson, color="Year_old", color_discrete_sequence=px.colors.qualitative.Dark24,
+# color_discrete_sequence=px.colors.qualitative.Dark24
+# color_discrete_map=dict(zip(gdf['Year'].unique(),px.colors.qualitative.Dark24)),
+fig = px.choropleth_mapbox(gdf, geojson=geojson, color="Year_old", labels={'Year_old':'Year'}, hover_name='Year_old',
                                                       locations="shape_id", featureidkey="properties.shape_id",
                                                       center = {"lat": rva_lat, "lon": rva_lon},
-                                                      mapbox_style="carto-positron", zoom=11, animation_frame='Year')
+                                                      mapbox_style="carto-positron", zoom=11, animation_frame='Year',
+                                                      animation_group='Year')
 fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
 # fig.show()
 fig.write_html('index.md')
