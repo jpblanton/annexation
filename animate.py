@@ -8,6 +8,7 @@ def duplicate_rows(df, target='Year'):
     """
     `target` should be an integer column of `df`
     """
+    df[target+'_old'] = df[target]
     partials = {y: df[df[target] <= y].copy() for y in df[target].unique()}
     for key in partials:
         partials[key][target] = key
@@ -35,9 +36,10 @@ geojson = json.loads(gdf.to_crs(ll_crs).to_json())
 # just need to write something to duplicate all that information
 
 
-fig = px.choropleth_mapbox(gdf, geojson=geojson, color="shape_id",
+fig = px.choropleth_mapbox(gdf, geojson=geojson, color="Year_old", color_discrete_sequence=px.colors.qualitative.Dark24,
                                                       locations="shape_id", featureidkey="properties.shape_id",
                                                       center = {"lat": rva_lat, "lon": rva_lon},
                                                       mapbox_style="carto-positron", zoom=11, animation_frame='Year')
 fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
 # fig.show()
+fig.write_html('index.md')
